@@ -1,5 +1,7 @@
 
-baseURL = "https://error-docs.vercel.app/"
+baseURL = "/"           # Root-relative URLs
+relativeURLs = true     # Make links relative (./css/...)
+canonifyURLs = true     # Make sure Hugo resolves URLs correctly
 
 languageCode = "en-us"
 theme = "terminal"
