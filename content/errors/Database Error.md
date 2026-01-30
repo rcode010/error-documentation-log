@@ -1,8 +1,9 @@
 ---
-title: "Database Error Documentation Log"
+title: Database Error Documentation Log
 date: 2026-01-30
 draft: false
 tags:
+slug: Database
 ---
 
 ## Error #1 - Cast to ObjectId Failed for Value (BSONError)
