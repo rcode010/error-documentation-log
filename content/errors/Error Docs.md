@@ -3,7 +3,7 @@ title: Error Documentation Log
 date: 2026-01-30
 draft: false
 tags:
-slug:
+slug: Main
 ---
 
 # Error Documentation Log
