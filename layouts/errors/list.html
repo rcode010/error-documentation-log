@@ -1,28 +1,5 @@
 <nav class="tabs">
-  {{ $paginator := .Paginate (where .Pages "Type" "errors") }}
-  {{ range $i, $page := $paginator.Pages }}
-    <a href="{{ $page.RelPermalink }}" class="tab">
-      Page {{ add $i 1 }}
-    </a>
+  {{ range where .Site.RegularPages "Type" "errors" }}
+    <a href="{{ .RelPermalink }}" class="tab">{{ .Title }}</a>
   {{ end }}
 </nav>
-
-<main>
-  {{ range $paginator.Pages }}
-    <article>
-      <h2><a href="{{ .RelPermalink }}">{{ .Title }}</a></h2>
-      {{ .Summary }}
-    </article>
-  {{ end }}
-</main>
-
-<!-- Pagination links -->
-<div class="pagination">
-  {{ if $paginator.HasPrev }}
-    <a href="{{ $paginator.Prev.URL }}">Previous</a>
-  {{ end }}
-  {{ if $paginator.HasNext }}
-    <a href="{{ $paginator.Next.URL }}">Next</a>
-  {{ end }}
-</div>
-
