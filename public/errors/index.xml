@@ -16,13 +16,6 @@
       <description>\</description>
     </item>
     <item>
-      <title>Database Error Documentation Log</title>
-      <link>/errors/error-docs/react-error/</link>
-      <pubDate>Fri, 30 Jan 2026 00:00:00 +0000</pubDate>
-      <guid>/errors/error-docs/react-error/</guid>
-      <description>Error #1 - Cast to ObjectId Failed for Value (BSONError) Date Encountered: TBD&#xA;Severity: 🔴 High&#xA;Environment: Development / Backend&#xA;Status: ✅ Resolved&#xA;Error Description Attempting to save a Company document with subdocuments in the models array caused a BSONError because some _id values were invalid strings.&#xA;Backend tried to save updates to company.models[]&#xA;Mongoose attempted to cast each _id to a MongoDB ObjectId&#xA;Invalid _id strings triggered the error, even if only unrelated fields (name, logo) were updated</description>
-    </item>
-    <item>
       <title>Error Documentation Log</title>
       <link>/errors/error-docs/</link>
       <pubDate>Fri, 30 Jan 2026 00:00:00 +0000</pubDate>
@@ -42,6 +35,13 @@
       <pubDate>Fri, 30 Jan 2026 00:00:00 +0000</pubDate>
       <guid>/errors/react-error/</guid>
       <description>React Error Documentation Log here we write react error documentation</description>
+    </item>
+    <item>
+      <title>React Error Documentation Log</title>
+      <link>/errors/error-docs/react-error/</link>
+      <pubDate>Fri, 30 Jan 2026 00:00:00 +0000</pubDate>
+      <guid>/errors/error-docs/react-error/</guid>
+      <description>Error #1 - Cast to ObjectId Failed for Value (BSONError) Date Encountered: TBD&#xA;Severity: 🔴 High&#xA;Environment: Development / Backend&#xA;Status: ✅ Resolved&#xA;Error Description Attempting to save a Company document with subdocuments in the models array caused a BSONError because some _id values were invalid strings.&#xA;Backend tried to save updates to company.models[]&#xA;Mongoose attempted to cast each _id to a MongoDB ObjectId&#xA;Invalid _id strings triggered the error, even if only unrelated fields (name, logo) were updated</description>
     </item>
   </channel>
 </rss>
