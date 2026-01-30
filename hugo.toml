@@ -1,0 +1,39 @@
+baseurl = "/"
+languageCode = "en-us"
+theme = "terminal"
+pagination.pagerSize = 10
+
+[markup.highlight]
+  noClasses = false
+
+[params]
+  contentTypeName = "errors"  # Changed to errors!
+  showMenuItems = 2
+  fullWidthTheme = false
+  centerTheme = false
+  autoCover = true
+  showLastUpdated = true
+
+[languages]
+  [languages.en]
+    languageName = "English"
+    title = "Error Documentation Hub"  # Your site title
+
+    [languages.en.params]
+      subtitle = "Technical Errors & Solutions Database"
+      keywords = "errors, documentation, debugging"
+      readMore = "Read full error"
+
+      [languages.en.params.logo]
+        logoText = "🐛 Error Docs"
+        logoHomeLink = "/"
+
+      [languages.en.menu]
+        [[languages.en.menu.main]]
+          identifier = "errors"
+          name = "All Errors"
+          url = "/errors"
+        [[languages.en.menu.main]]
+          identifier = "home"
+          name = "Home"
+          url = "/"
