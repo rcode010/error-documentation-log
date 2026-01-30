@@ -1,5 +1,6 @@
 
-baseurl = "/"
+baseURL = "https://error-docs.vercel.app/"
+
 languageCode = "en-us"
 theme = "terminal"
 pagination.pagerSize = 10
