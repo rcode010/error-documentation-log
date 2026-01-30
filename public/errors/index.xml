@@ -9,10 +9,24 @@
     <lastBuildDate>Fri, 30 Jan 2026 00:00:00 +0000</lastBuildDate>
     <atom:link href="/errors/index.xml" rel="self" type="application/rss+xml" />
     <item>
+      <title>Database Error Documentation Log</title>
+      <link>/errors/error-docs/database-error/</link>
+      <pubDate>Fri, 30 Jan 2026 00:00:00 +0000</pubDate>
+      <guid>/errors/error-docs/database-error/</guid>
+      <description>\</description>
+    </item>
+    <item>
       <title>Error Documentation Log</title>
       <link>/errors/error-docs/</link>
       <pubDate>Fri, 30 Jan 2026 00:00:00 +0000</pubDate>
       <guid>/errors/error-docs/</guid>
+      <description>Error Documentation Log Last Updated: 13th Jan 2026&#xA;Table of Contents [[#Error 1 - Unexpected Logout After Company Update|Error #1 - Unexpected Logout After Company Update]] [[#Error 2 - Docker daemon - Host EC2 kernel conflict|Error #2 - Docker daemon - Host EC2 kernel conflict]] [[#Error 3 - E-Commerce Project Postponed|Error #3 - E-Commerce Project Postponed Due to Undefined Business Requirements]] Error #1 - Unexpected Logout After Company Update Date Encountered: 17th Dec 2025</description>
+    </item>
+    <item>
+      <title>Error Documentation Log</title>
+      <link>/errors/error-docs/error-docs/</link>
+      <pubDate>Fri, 30 Jan 2026 00:00:00 +0000</pubDate>
+      <guid>/errors/error-docs/error-docs/</guid>
       <description>Error Documentation Log Last Updated: 13th Jan 2026&#xA;Table of Contents [[#Error 1 - Unexpected Logout After Company Update|Error #1 - Unexpected Logout After Company Update]] [[#Error 2 - Docker daemon - Host EC2 kernel conflict|Error #2 - Docker daemon - Host EC2 kernel conflict]] [[#Error 3 - E-Commerce Project Postponed|Error #3 - E-Commerce Project Postponed Due to Undefined Business Requirements]] Error #1 - Unexpected Logout After Company Update Date Encountered: 17th Dec 2025</description>
     </item>
     <item>
@@ -21,6 +35,13 @@
       <pubDate>Fri, 30 Jan 2026 00:00:00 +0000</pubDate>
       <guid>/errors/react-error/</guid>
       <description>React Error Documentation Log here we write react error documentation</description>
+    </item>
+    <item>
+      <title>React Error Documentation Log</title>
+      <link>/errors/error-docs/react-error/</link>
+      <pubDate>Fri, 30 Jan 2026 00:00:00 +0000</pubDate>
+      <guid>/errors/error-docs/react-error/</guid>
+      <description>Error #1 - Cast to ObjectId Failed for Value (BSONError) Date Encountered: TBD&#xA;Severity: 🔴 High&#xA;Environment: Development / Backend&#xA;Status: ✅ Resolved&#xA;Error Description Attempting to save a Company document with subdocuments in the models array caused a BSONError because some _id values were invalid strings.&#xA;Backend tried to save updates to company.models[]&#xA;Mongoose attempted to cast each _id to a MongoDB ObjectId&#xA;Invalid _id strings triggered the error, even if only unrelated fields (name, logo) were updated</description>
     </item>
   </channel>
 </rss>
