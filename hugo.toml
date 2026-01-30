@@ -42,6 +42,6 @@ pagination.pagerSize = 10
           name = "Home"
           url = "/"
         [[languages.en.menu.main]]
-          identifier = "errors"
-          name = "All Errors"
-          url = "/errors"
+          identifier = "databse"
+          name = "Database"
+          url = "/errors/Database"
