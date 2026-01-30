@@ -6,7 +6,14 @@
   
   <meta http-equiv="content-type" content="text/html; charset=utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="\" />
+<meta name="description" content="Error #1 - Cast to ObjectId Failed for Value (BSONError) Date Encountered: TBD
+Severity: 🔴 High
+Environment: Development / Backend
+Status: ✅ Resolved
+Error Description Attempting to save a Company document with subdocuments in the models array caused a BSONError because some _id values were invalid strings.
+Backend tried to save updates to company.models[]
+Mongoose attempted to cast each _id to a MongoDB ObjectId
+Invalid _id strings triggered the error, even if only unrelated fields (name, logo) were updated" />
 <meta name="keywords" content="errors, documentation, debugging" />
 
   <meta name="robots" content="noodp" />
@@ -73,7 +80,14 @@
 <meta property="og:locale" content="en" />
 <meta property="og:type" content="article" />
 <meta property="og:title" content="Database Error Documentation Log">
-<meta property="og:description" content="\" />
+<meta property="og:description" content="Error #1 - Cast to ObjectId Failed for Value (BSONError) Date Encountered: TBD
+Severity: 🔴 High
+Environment: Development / Backend
+Status: ✅ Resolved
+Error Description Attempting to save a Company document with subdocuments in the models array caused a BSONError because some _id values were invalid strings.
+Backend tried to save updates to company.models[]
+Mongoose attempted to cast each _id to a MongoDB ObjectId
+Invalid _id strings triggered the error, even if only unrelated fields (name, logo) were updated" />
 <meta property="og:url" content="/errors/error-docs/database-error/" />
 <meta property="og:site_name" content="Error Documentation Hub" />
 
@@ -171,7 +185,156 @@
   
 
   <div class="post-content"><div>
-        <p>\</p>
+        <h2 id="error-1---cast-to-objectid-failed-for-value-bsonerror">Error #1 - Cast to ObjectId Failed for Value (BSONError)<a href="#error-1---cast-to-objectid-failed-for-value-bsonerror" class="hanchor" ariaLabel="Anchor">#</a> </h2>
+<p><strong>Date Encountered:</strong> TBD<br>
+<strong>Severity:</strong> 🔴 High<br>
+<strong>Environment:</strong> Development / Backend<br>
+<strong>Status:</strong> ✅ Resolved</p>
+<h3 id="error-description">Error Description<a href="#error-description" class="hanchor" ariaLabel="Anchor">#</a> </h3>
+<p>Attempting to save a <code>Company</code> document with subdocuments in the <code>models</code> array caused a <strong>BSONError</strong> because some <code>_id</code> values were invalid strings.</p>
+<ul>
+<li>
+<p>Backend tried to save updates to <code>company.models[]</code></p>
+</li>
+<li>
+<p>Mongoose attempted to <strong>cast each <code>_id</code> to a MongoDB ObjectId</strong></p>
+</li>
+<li>
+<p>Invalid <code>_id</code> strings triggered the error, even if only unrelated fields (<code>name</code>, <code>logo</code>) were updated</p>
+</li>
+<li>
+<p>Only companies with existing invalid <code>_id</code>s were affected</p>
+</li>
+</ul>
+<h3 id="stacktechnology">Stack/Technology<a href="#stacktechnology" class="hanchor" ariaLabel="Anchor">#</a> </h3>
+<ul>
+<li>
+<p><strong>Backend:</strong> Node.js + Express</p>
+</li>
+<li>
+<p><strong>Database:</strong> MongoDB</p>
+</li>
+<li>
+<p><strong>ODM:</strong> Mongoose</p>
+</li>
+<li>
+<p><strong>Schema involved:</strong> Company (<code>models</code> array subdocuments)</p>
+</li>
+</ul>
+<h3 id="error-messagelogs">Error Message/Logs<a href="#error-messagelogs" class="hanchor" ariaLabel="Anchor">#</a> </h3>
+<p><strong>Mongoose Validation Error:</strong></p>
+<pre tabindex="0"><code>Company validation failed:
+models.X._id: Cast to ObjectId failed for value &#34;693c1fer1651bd4faf7e88cfa&#34;
+(type string) at path &#34;_id&#34; because of &#34;BSONError&#34;
+</code></pre><h3 id="root-cause">Root Cause<a href="#root-cause" class="hanchor" ariaLabel="Anchor">#</a> </h3>
+<p><strong>Primary Issue:</strong> Subdocument <code>_id</code>s were invalid strings instead of MongoDB ObjectIds.</p>
+<h4 id="technical-explanation">Technical Explanation<a href="#technical-explanation" class="hanchor" ariaLabel="Anchor">#</a> </h4>
+<ol>
+<li>
+<p>Mongoose automatically casts <code>_id</code> fields to <strong>ObjectId</strong> during <code>save()</code>.</p>
+</li>
+<li>
+<p>Existing invalid strings in <code>models._id</code> caused <strong>BSONError</strong> even if the update was unrelated.</p>
+</li>
+<li>
+<p>Invalid <code>_id</code>s originated from:</p>
+<ul>
+<li>
+<p>Manual database inserts</p>
+</li>
+<li>
+<p>Frontend sending <code>_id</code> for subdocuments</p>
+</li>
+<li>
+<p>Old schemas with <code>auto: true</code> not fixing legacy data</p>
+</li>
+</ul>
+</li>
+</ol>
+<h4 id="problematic-schema-before">Problematic Schema (Before)<a href="#problematic-schema-before" class="hanchor" ariaLabel="Anchor">#</a> </h4>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-js" data-lang="js"><span class="line"><span class="cl"><span class="nx">models</span><span class="o">:</span> <span class="p">[</span>
+</span></span><span class="line"><span class="cl">  <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">_id</span><span class="o">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">type</span><span class="o">:</span> <span class="nx">mongoose</span><span class="p">.</span><span class="nx">Schema</span><span class="p">.</span><span class="nx">Types</span><span class="p">.</span><span class="nx">ObjectId</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">auto</span><span class="o">:</span> <span class="kc">true</span>
+</span></span><span class="line"><span class="cl">    <span class="p">},</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">name</span><span class="o">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">type</span><span class="o">:</span> <span class="nb">String</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">required</span><span class="o">:</span> <span class="kc">true</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">]</span>
+</span></span></code></pre></div><h3 id="how-we-fixed-it">How We Fixed It<a href="#how-we-fixed-it" class="hanchor" ariaLabel="Anchor">#</a> </h3>
+<h4 id="1-fix-the-schema-recommended">1. Fix the Schema (Recommended)<a href="#1-fix-the-schema-recommended" class="hanchor" ariaLabel="Anchor">#</a> </h4>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-js" data-lang="js"><span class="line"><span class="cl"><span class="nx">models</span><span class="o">:</span> <span class="p">[</span>
+</span></span><span class="line"><span class="cl">  <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">name</span><span class="o">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">type</span><span class="o">:</span> <span class="nb">String</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">required</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">trim</span><span class="o">:</span> <span class="kc">true</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">]</span>
+</span></span></code></pre></div><ul>
+<li>
+<p>Removed manual <code>_id</code> definition</p>
+</li>
+<li>
+<p>Let Mongoose auto-generate valid ObjectIds for subdocuments</p>
+</li>
+</ul>
+<h4 id="2-clean-existing-invalid-data-one-time-fix">2. Clean Existing Invalid Data (One-Time Fix)<a href="#2-clean-existing-invalid-data-one-time-fix" class="hanchor" ariaLabel="Anchor">#</a> </h4>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-js" data-lang="js"><span class="line"><span class="cl"><span class="nx">db</span><span class="p">.</span><span class="nx">companies</span><span class="p">.</span><span class="nx">updateMany</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">  <span class="p">{</span> <span class="s2">&#34;models._id&#34;</span><span class="o">:</span> <span class="p">{</span> <span class="nx">$type</span><span class="o">:</span> <span class="s2">&#34;string&#34;</span> <span class="p">}</span> <span class="p">},</span>
+</span></span><span class="line"><span class="cl">  <span class="p">{</span> <span class="nx">$unset</span><span class="o">:</span> <span class="p">{</span> <span class="s2">&#34;models.$[m]._id&#34;</span><span class="o">:</span> <span class="s2">&#34;&#34;</span> <span class="p">}</span> <span class="p">},</span>
+</span></span><span class="line"><span class="cl">  <span class="p">{</span> <span class="nx">arrayFilters</span><span class="o">:</span> <span class="p">[{</span> <span class="s2">&#34;m._id&#34;</span><span class="o">:</span> <span class="p">{</span> <span class="nx">$type</span><span class="o">:</span> <span class="s2">&#34;string&#34;</span> <span class="p">}</span> <span class="p">}]</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">)</span>
+</span></span></code></pre></div><ul>
+<li>
+<p>Removes invalid <code>_id</code>s</p>
+</li>
+<li>
+<p>Allows Mongoose to generate valid ObjectIds automatically</p>
+</li>
+</ul>
+<h4 id="3-access-models-after-fix">3. Access Models After Fix<a href="#3-access-models-after-fix" class="hanchor" ariaLabel="Anchor">#</a> </h4>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-js" data-lang="js"><span class="line"><span class="cl"><span class="kr">const</span> <span class="nx">model</span> <span class="o">=</span> <span class="nx">company</span><span class="p">.</span><span class="nx">models</span><span class="p">.</span><span class="nx">id</span><span class="p">(</span><span class="nx">modelId</span><span class="p">);</span>
+</span></span></code></pre></div><ul>
+<li>Works because Mongoose now auto-generates <code>_id</code> for each subdocument</li>
+</ul>
+<h3 id="prevention--lessons-learned">Prevention / Lessons Learned<a href="#prevention--lessons-learned" class="hanchor" ariaLabel="Anchor">#</a> </h3>
+<ul>
+<li>
+<p>Do not manually define <code>_id</code> for subdocuments unless absolutely necessary</p>
+</li>
+<li>
+<p>Always clean legacy or manually inserted data</p>
+</li>
+<li>
+<p>Mongoose validation casts all <code>_id</code> fields during save, so invalid data can break unrelated updates</p>
+</li>
+</ul>
+<h3 id="key-takeaways">Key Takeaways<a href="#key-takeaways" class="hanchor" ariaLabel="Anchor">#</a> </h3>
+<ul>
+<li>
+<p>Mongoose <strong>casts <code>_id</code> values to ObjectId</strong> during <code>save()</code></p>
+</li>
+<li>
+<p>Invalid <code>_id</code> strings cause BSONError</p>
+</li>
+<li>
+<p>Auto-generated ObjectIds for subdocuments prevent future issues</p>
+</li>
+<li>
+<p>Legacy data must be cleaned to avoid cascading errors</p>
+</li>
+</ul>
+<h3 id="final-status">Final Status<a href="#final-status" class="hanchor" ariaLabel="Anchor">#</a> </h3>
+<p>✔ Error resolved<br>
+✔ No data loss<br>
+✔ Schema corrected<br>
+✔ Future updates safe<br>
+✔ Explicit explanation of casting behavior included</p>
 
       </div></div>
 

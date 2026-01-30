@@ -185,7 +185,14 @@
 
         <div class="post-content">
           
-            \
+            Error #1 - Cast to ObjectId Failed for Value (BSONError) Date Encountered: TBD
+Severity: 🔴 High
+Environment: Development / Backend
+Status: ✅ Resolved
+Error Description Attempting to save a Company document with subdocuments in the models array caused a BSONError because some _id values were invalid strings.
+Backend tried to save updates to company.models[]
+Mongoose attempted to cast each _id to a MongoDB ObjectId
+Invalid _id strings triggered the error, even if only unrelated fields (name, logo) were updated
           
         </div>
 
@@ -287,14 +294,7 @@ Table of Contents [[#Error 1 - Unexpected Logout After Company Update|Error #1 -
 
         <div class="post-content">
           
-            Error #1 - Cast to ObjectId Failed for Value (BSONError) Date Encountered: TBD
-Severity: 🔴 High
-Environment: Development / Backend
-Status: ✅ Resolved
-Error Description Attempting to save a Company document with subdocuments in the models array caused a BSONError because some _id values were invalid strings.
-Backend tried to save updates to company.models[]
-Mongoose attempted to cast each _id to a MongoDB ObjectId
-Invalid _id strings triggered the error, even if only unrelated fields (name, logo) were updated
+            
           
         </div>
 
