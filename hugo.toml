@@ -42,6 +42,10 @@ pagination.pagerSize = 10
           name = "Home"
           url = "/"
         [[languages.en.menu.main]]
-          identifier = "databse"
+          identifier = "database"
           name = "Database"
           url = "/errors/Database"
+          [[languages.en.menu.main]]
+          identifier = "react"
+          name = "React"
+          url = "/errors/React"
