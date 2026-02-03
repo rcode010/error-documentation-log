@@ -29,12 +29,5 @@
       <guid>/errors/react/</guid>
       <description>React Error Log</description>
     </item>
-    <item>
-      <title></title>
-      <link>/errors/untitled/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>/errors/untitled/</guid>
-      <description></description>
-    </item>
   </channel>
 </rss>
