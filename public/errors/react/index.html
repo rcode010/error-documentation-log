@@ -6,7 +6,15 @@
   
   <meta http-equiv="content-type" content="text/html; charset=utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="" />
+<meta name="description" content="Error #1 - [Unexpected Logout After Company Update] Date Encountered: 17th Dec 2025
+Severity: High
+Environment: Development
+Status: Resolved
+Error Description Users experienced unexpected logouts immediately after updating company information, despite having valid access tokens. The application flow was:
+User successfully updates company details via the desktop client
+Update operation completes successfully on the backend
+User is immediately and unexpectedly logged out with no error message or warning
+User experience severely impacted - confusion and frustration" />
 <meta name="keywords" content="errors, documentation, debugging" />
 
   <meta name="robots" content="noodp" />
@@ -73,7 +81,15 @@
 <meta property="og:locale" content="en" />
 <meta property="og:type" content="article" />
 <meta property="og:title" content="React Error Documentation Log">
-<meta property="og:description" content="" />
+<meta property="og:description" content="Error #1 - [Unexpected Logout After Company Update] Date Encountered: 17th Dec 2025
+Severity: High
+Environment: Development
+Status: Resolved
+Error Description Users experienced unexpected logouts immediately after updating company information, despite having valid access tokens. The application flow was:
+User successfully updates company details via the desktop client
+Update operation completes successfully on the backend
+User is immediately and unexpectedly logged out with no error message or warning
+User experience severely impacted - confusion and frustration" />
 <meta property="og:url" content="/errors/react/" />
 <meta property="og:site_name" content="Error Documentation Hub" />
 
@@ -197,7 +213,318 @@
 
   
 
-  <div class="post-content"></div>
+  <div class="post-content"><div>
+        <h2 id="error-1---unexpected-logout-after-company-update">Error #1 - [Unexpected Logout After Company Update]<a href="#error-1---unexpected-logout-after-company-update" class="hanchor" ariaLabel="Anchor">#</a> </h2>
+<p>Date Encountered: 17th Dec 2025<br>
+Severity: High<br>
+Environment: Development<br>
+Status: Resolved</p>
+<h3 id="error-description">Error Description<a href="#error-description" class="hanchor" ariaLabel="Anchor">#</a> </h3>
+<p>Users experienced unexpected logouts immediately after updating company information, despite having valid access tokens. The application flow was:</p>
+<ol>
+<li>
+<p>User successfully updates company details via the desktop client</p>
+</li>
+<li>
+<p>Update operation completes successfully on the backend</p>
+</li>
+<li>
+<p>User is immediately and unexpectedly logged out with no error message or warning</p>
+</li>
+<li>
+<p>User experience severely impacted - confusion and frustration</p>
+</li>
+</ol>
+<p>The frontend axios interceptor, which was recently updated to queue pending refresh token requests, was triggering token refresh attempts during app reload. The backend consistently rejected these refresh attempts with a 401 status and &ldquo;Invalid refresh token&rdquo; message, forcing the client-side logout logic to execute.</p>
+<h2 id="stacktechnology">Stack/Technology<a href="#stacktechnology" class="hanchor" ariaLabel="Anchor">#</a> </h2>
+<ul>
+<li>
+<p>Frontend: Electron desktop client with TypeScript, Axios, Zustand (useUserStore)</p>
+</li>
+<li>
+<p>Backend: Node.js/Express API with JWT authentication</p>
+</li>
+<li>
+<p>Authentication: JWT with separate access and refresh tokens (stored in Electron secure storage)</p>
+</li>
+<li>
+<p>Environment: Staging server (Render.com)</p>
+</li>
+</ul>
+<h3 id="error-messagelogs">Error Message/Logs<a href="#error-messagelogs" class="hanchor" ariaLabel="Anchor">#</a> </h3>
+<p>Backend console output:<br>
+&ldquo;Invalid signature&rdquo; (from jwt.verify() error)</p>
+<p>API Response:<br>
+POST <a href="https://solution-squad-backend-development.onrender.com/api/admin/refresh-token">https://solution-squad-backend-development.onrender.com/api/admin/refresh-token</a> Status: 401 Unauthorized<br>
+Body: { &ldquo;success&rdquo;: false, &ldquo;message&rdquo;: &ldquo;Invalid refresh token&rdquo; }</p>
+<p>Client console:<br>
+Auth refresh failed: AxiosError<br>
+Token refresh failed<br>
+Logout triggered</p>
+<h3 id="root-cause">Root Cause<a href="#root-cause" class="hanchor" ariaLabel="Anchor">#</a> </h3>
+<p>Primary Issue: Improper use of location.reload() causing race conditions and auth state destruction.</p>
+<h3 id="technical-explanation">Technical Explanation:<a href="#technical-explanation" class="hanchor" ariaLabel="Anchor">#</a> </h3>
+<ol>
+<li>Page Reload Destroys In-Memory State</li>
+</ol>
+<ul>
+<li>
+<p>The EditCompanyModal.tsx component was calling location.reload() immediately after the update request</p>
+</li>
+<li>
+<p>This caused the entire app to reload while the update request was still in flight</p>
+</li>
+<li>
+<p>All in-memory state, including the accessToken stored in Zustand, was destroyed</p>
+</li>
+</ul>
+<ol start="3">
+<li>Auth State Corruption During Reload</li>
+</ol>
+<p>typescript</p>
+<ul>
+<li>
+<p>  // EditCompanyModal.tsx - PROBLEMATIC CODE</p>
+</li>
+<li>
+<p>   const handleUpdate = async (e: React.FormEvent) =&gt; {</p>
+</li>
+<li>
+<p>     // &hellip;</p>
+</li>
+<li>
+<p>     await updateCompany(formDataToSend, company._id);</p>
+</li>
+<li>
+<p>     globalThis.location.reload(); // ❌ Destroys auth state</p>
+</li>
+</ul>
+<p>   };</p>
+<ul>
+<li>
+<p>When the page reloaded, App.tsx remounted and called refreshAuth()</p>
+</li>
+<li>
+<p>The access token was gone from memory</p>
+</li>
+<li>
+<p>The refresh token was retrieved from Electron secure storage</p>
+</li>
+<li>
+<p>However, due to timing issues during reload, the token was either:</p>
+</li>
+<li>
+<p>Stale/corrupted from a previous session</p>
+</li>
+<li>
+<p>Not fully persisted from a recent refresh</p>
+</li>
+<li>
+<p>Racing with another token update operation</p>
+</li>
+</ul>
+<ol start="3">
+<li>Token Verification Failure Chain</li>
+</ol>
+<ul>
+<li>
+<p>  Time 0ms:   User clicks &ldquo;Save Changes&rdquo;</p>
+</li>
+<li>
+<p>   Time 10ms:  Update request sent</p>
+</li>
+<li>
+<p>   Time 20ms:  location.reload() called (doesn&rsquo;t wait for response)</p>
+</li>
+<li>
+<p>   Time 30ms:  Page starts reloading → Zustand state destroyed</p>
+</li>
+<li>
+<p>   Time 50ms:  App.tsx remounts</p>
+</li>
+<li>
+<p>   Time 60ms:  refreshAuth() called (no accessToken in memory)</p>
+</li>
+<li>
+<p>   Time 70ms:  Retrieves refresh token from secure storage</p>
+</li>
+<li>
+<p>   Time 80ms:  Token is invalid/corrupted/stale</p>
+</li>
+<li>
+<p>   Time 90ms:  Backend jwt.verify() fails with &ldquo;Invalid signature&rdquo;</p>
+</li>
+</ul>
+<p>   Time 100ms: axios interceptor catches 401 → logout()</p>
+<ol start="4">
+<li>Why the New Axios Interceptor Made It Visible</li>
+</ol>
+<ul>
+<li>
+<p>Before the interceptor improvements, 401 errors might have silently failed</p>
+</li>
+<li>
+<p>The new interceptor properly handles 401s by attempting token refresh</p>
+</li>
+<li>
+<p>When refresh fails, it correctly logs the user out as a security measure</p>
+</li>
+<li>
+<p>This proper error handling exposed the underlying reload timing issue</p>
+</li>
+</ul>
+<p>Discovery process:</p>
+<ol>
+<li>
+<p>Initially suspected JWT secret mismatch between environments ❌</p>
+</li>
+<li>
+<p>Traced API calls - request structure was correct</p>
+</li>
+<li>
+<p>Added extensive logging to axios interceptor and refresh flow</p>
+</li>
+<li>
+<p>Noticed the error occurred specifically after company updates</p>
+</li>
+<li>
+<p>Discovered location.reload() was being called in modal handlers</p>
+</li>
+<li>
+<p>Realized reload was destroying auth state mid-request</p>
+</li>
+<li>
+<p>Found same anti-pattern in multiple components (CompaniesPage, EditCompanyModal, AddCompanyModal)</p>
+</li>
+</ol>
+<h3 id="how-we-fixed-it">How We Fixed It<a href="#how-we-fixed-it" class="hanchor" ariaLabel="Anchor">#</a> </h3>
+<h3 id="1-removed-all-locationreload-calls">1. Removed All location.reload() Calls<a href="#1-removed-all-locationreload-calls" class="hanchor" ariaLabel="Anchor">#</a> </h3>
+<p>Replaced hard reloads with proper state management using Zustand&rsquo;s built-in reactivity.</p>
+<h3 id="2-updated-store-to-return-successfailure-booleans">2. Updated Store to Return Success/Failure Booleans<a href="#2-updated-store-to-return-successfailure-booleans" class="hanchor" ariaLabel="Anchor">#</a> </h3>
+<ol start="3">
+<li>Updated Modal Handlers to Wait for Completion</li>
+</ol>
+<h3 id="4-fixed-refresh-button-in-companiespage">4. Fixed Refresh Button in CompaniesPage<a href="#4-fixed-refresh-button-in-companiespage" class="hanchor" ariaLabel="Anchor">#</a> </h3>
+<p>CompaniesPage.tsx:</p>
+<p>typescript</p>
+<p>const refresh = async (): Promise<!-- raw HTML omitted --> =&gt; {</p>
+<p>  setIsRefreshing(true);</p>
+<p>  await getCompanies(); // ✅ Just refetch data, don&rsquo;t reload page</p>
+<p>  setIsRefreshing(false);</p>
+<p>};</p>
+<h3 id="preventionlessons-learned">Prevention/Lessons Learned<a href="#preventionlessons-learned" class="hanchor" ariaLabel="Anchor">#</a> </h3>
+<h3 id="key-takeaways">Key Takeaways:<a href="#key-takeaways" class="hanchor" ariaLabel="Anchor">#</a> </h3>
+<ol>
+<li>Never use location.reload() in modern React applications</li>
+</ol>
+<ul>
+<li>
+<p>Destroys all in-memory state (auth tokens, form data, UI state)</p>
+</li>
+<li>
+<p>Creates race conditions with in-flight API requests</p>
+</li>
+<li>
+<p>Breaks single-page application architecture</p>
+</li>
+<li>
+<p>Provides poor user experience (flash, loss of scroll position)</p>
+</li>
+</ul>
+<ol start="3">
+<li>Proper State Management Practices:</li>
+</ol>
+<ul>
+<li>
+<p>Use Zustand/Redux reactivity for data updates</p>
+</li>
+<li>
+<p>Store actions should call get().getCompanies() to refresh data naturally</p>
+</li>
+<li>
+<p>Components automatically re-render when store data changes</p>
+</li>
+<li>
+<p>No need for manual page reloads</p>
+</li>
+</ul>
+<ol start="5">
+<li>Async Operation Handling:</li>
+</ol>
+<ul>
+<li>
+<p>Always await API calls before taking UI actions</p>
+</li>
+<li>
+<p>Return success/failure booleans from store actions</p>
+</li>
+<li>
+<p>Close modals/dialogs only AFTER operations complete</p>
+</li>
+<li>
+<p>Show loading states during operations</p>
+</li>
+</ul>
+<ol start="7">
+<li>Authentication State Protection:</li>
+</ol>
+<ul>
+<li>
+<p>Never destroy auth state unnecessarily</p>
+</li>
+<li>
+<p>Keep access tokens in memory (Zustand)</p>
+</li>
+<li>
+<p>Keep refresh tokens in secure storage (Electron secure storage)</p>
+</li>
+<li>
+<p>Rely on axios interceptors for token refresh, not manual reloads</p>
+</li>
+</ul>
+<ol start="9">
+<li>Error Handling Best Practices:</li>
+</ol>
+<ul>
+<li>
+<p>Proper 401 handling reveals underlying issues (which is good!)</p>
+</li>
+<li>
+<p>Silent failures hide bugs - always handle errors explicitly</p>
+</li>
+<li>
+<p>Log errors comprehensively for debugging</p>
+</li>
+<li>
+<p>Toast notifications for user feedback</p>
+</li>
+</ul>
+<h3 id="code-review-checklist">Code Review Checklist:<a href="#code-review-checklist" class="hanchor" ariaLabel="Anchor">#</a> </h3>
+<ul>
+<li>
+<p>No location.reload() or window.location.reload() calls</p>
+</li>
+<li>
+<p>All async operations are properly awaited</p>
+</li>
+<li>
+<p>Store actions return success/failure status</p>
+</li>
+<li>
+<p>Modal handlers wait for operations before closing</p>
+</li>
+<li>
+<p>Auth state is never destroyed during normal operations</p>
+</li>
+<li>
+<p>Loading states are shown during async operations</p>
+</li>
+</ul>
+<h3 id="related-issues">Related Issues<a href="#related-issues" class="hanchor" ariaLabel="Anchor">#</a> </h3>
+<p>N/A</p>
+<p>**</p>
+
+      </div></div>
 
   
     
